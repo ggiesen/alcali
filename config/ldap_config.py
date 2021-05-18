@@ -21,19 +21,19 @@ else:
 # If your configuration makes any references to LDAP groups, this and
 # AUTH_LDAP_GROUP_TYPE must be set.
 if os.environ.get("AUTH_LDAP_GROUP_SEARCH"):
-    AUTH_LDAP_GROUP_SEARCH = os.environ.get("AUTH_LDAP_GROUP_SEARCH")
+    AUTH_LDAP_GROUP_SEARCH = eval(os.environ.get("AUTH_LDAP_GROUP_SEARCH"))
 
 # An LDAPGroupType instance describing the type of group returned by AUTH_LDAP_GROUP_SEARCH.
 if os.environ.get("AUTH_LDAP_GROUP_TYPE"):
-    AUTH_LDAP_GROUP_TYPE = os.environ.get("AUTH_LDAP_GROUP_TYPE")
+    AUTH_LDAP_GROUP_TYPE = eval(os.environ.get("AUTH_LDAP_GROUP_TYPE"))
 
 # Simple group restrictions
-AUTH_LDAP_REQUIRE_GROUP = os.environ.get("AUTH_LDAP_REQUIRE_GROUP")
-AUTH_LDAP_DENY_GROUP = os.environ.get("AUTH_LDAP_DENY_GROUP")
+AUTH_LDAP_REQUIRE_GROUP = eval(os.environ.get("AUTH_LDAP_REQUIRE_GROUP"))
+AUTH_LDAP_DENY_GROUP = eval(os.environ.get("AUTH_LDAP_DENY_GROUP"))
 
-# Define user flags based on group membership. Currently only "is_staff" is supported.
+# Define user flags based on group membership. Currently only "is_active" and "is_staff" are supported.
 if os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP"):
-    AUTH_LDAP_USER_FLAGS_BY_GROUP = os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP")
+    AUTH_LDAP_USER_FLAGS_BY_GROUP = eval(os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP"))
 
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -43,6 +43,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "email": os.environ.get("AUTH_LDAP_USER_ATTR_MAP_EMAIL", "mail"),
 }
 
+# Use start_tls_s() to enable TLS encryption over the standard LDAP port.
 if os.environ.get("AUTH_LDAP_START_TLS"):
     AUTH_LDAP_START_TLS = True
 
