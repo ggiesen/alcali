@@ -168,9 +168,10 @@ def _get_serv():
 
 def auth(username, password):
     """
-    Authenticate using a MySQL user table
+    Authenticate using a MySQL/PostgreSQL user table
     """
 
+    log.debug("Alcali attempting to authenticate user '{}'".format(username))
     if str(password) and str(password) != "REVOKED":
         with _get_serv() as cur:
             sql = """SELECT c.token FROM user_settings c INNER JOIN auth_user a ON c.user_id = a.id AND a.username= %s;"""
@@ -180,6 +181,26 @@ def auth(username, password):
             if user_token:
                 token = str(user_token[0])
                 if str(token) == str(password):
-                    log.debug("Alcali authentication successful")
+                    log.debug("Alcali successfully authenticated user: '{}'".format(username))
                     return True
     return False
+
+
+def groups(username, **kwargs):
+    """
+    Retrieve group membership using a MySQL/PostgreSQL user table
+    """
+
+    log.debug("Alcali attempting to fetch groups for user '{}'".format(username))
+    with _get_serv() as cur:
+        sql = """SELECT a.name FROM auth_user c INNER JOIN auth_user_groups b ON c.id = b.user_id INNER JOIN auth_group a ON b.group_id = a.id AND c.username = %s;"""
+        cur.execute(sql, (username,))
+        groups_result = cur.fetchall()
+        if groups_result:
+            groups = []
+            for row in groups_result:
+                for column in row:
+                    groups.append(column)
+            log.debug("Alcali successfully fetched groups for user '{}': {}".format(username, groups))
+            return groups
+    return []
