@@ -1,6 +1,6 @@
 import os
 import ldap
-from django_auth_ldap.config import LDAPSearch
+from django_auth_ldap.config import LDAPGroupQuery, LDAPSearch, GroupOfNamesType
 
 # Baseline configuration.
 AUTH_LDAP_SERVER_URI = os.environ.get("AUTH_LDAP_SERVER_URI", "ldap://localhost")
@@ -17,9 +17,23 @@ else:
         os.environ.get("AUTH_LDAP_USER_SEARCH_FILTER", "(objectClass=*)"),
     )
 
+# An LDAPSearch object that finds all LDAP groups that users might belong to.
+# If your configuration makes any references to LDAP groups, this and
+# AUTH_LDAP_GROUP_TYPE must be set.
+if os.environ.get("AUTH_LDAP_GROUP_SEARCH"):
+    AUTH_LDAP_GROUP_SEARCH = os.environ.get("AUTH_LDAP_GROUP_SEARCH")
+
+# An LDAPGroupType instance describing the type of group returned by AUTH_LDAP_GROUP_SEARCH.
+if os.environ.get("AUTH_LDAP_GROUP_TYPE"):
+    AUTH_LDAP_GROUP_TYPE = os.environ.get("AUTH_LDAP_GROUP_TYPE")
+
 # Simple group restrictions
 AUTH_LDAP_REQUIRE_GROUP = os.environ.get("AUTH_LDAP_REQUIRE_GROUP")
 AUTH_LDAP_DENY_GROUP = os.environ.get("AUTH_LDAP_DENY_GROUP")
+
+# Define user flags based on group membership. Currently only "is_staff" is supported.
+if os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP"):
+    AUTH_LDAP_USER_FLAGS_BY_GROUP = os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP")
 
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -34,6 +48,10 @@ if os.environ.get("AUTH_LDAP_START_TLS"):
 
 # This is the default.
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
+
+# Mirror users' LDAP group membership in the Django database.
+if os.environ.get("AUTH_LDAP_MIRROR_GROUPS"):
+    AUTH_LDAP_MIRROR_GROUPS = True
 
 # Keep ModelBackend around for per-user permissions and maybe a local
 # superuser.
