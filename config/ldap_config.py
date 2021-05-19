@@ -1,6 +1,7 @@
 import os
+
 import ldap
-from django_auth_ldap.config import LDAPGroupQuery, LDAPSearch, GroupOfNamesType
+from django_auth_ldap.config import GroupOfNamesType, LDAPGroupQuery, LDAPSearch
 
 # List of permitted locals for eval()
 EVAL_LOCALS = {
@@ -33,21 +34,33 @@ else:
 # If your configuration makes any references to LDAP groups, this and
 # AUTH_LDAP_GROUP_TYPE must be set.
 if os.environ.get("AUTH_LDAP_GROUP_SEARCH"):
-    AUTH_LDAP_GROUP_SEARCH = eval(os.environ.get("AUTH_LDAP_GROUP_SEARCH"), {'__builtins__': None}, EVAL_LOCALS)
+    AUTH_LDAP_GROUP_SEARCH = eval(
+        os.environ.get("AUTH_LDAP_GROUP_SEARCH"), {"__builtins__": None}, EVAL_LOCALS
+    )
 
 # An LDAPGroupType instance describing the type of group returned by AUTH_LDAP_GROUP_SEARCH.
 if os.environ.get("AUTH_LDAP_GROUP_TYPE"):
-    AUTH_LDAP_GROUP_TYPE = eval(os.environ.get("AUTH_LDAP_GROUP_TYPE"), {'__builtins__': None}, EVAL_LOCALS)
+    AUTH_LDAP_GROUP_TYPE = eval(
+        os.environ.get("AUTH_LDAP_GROUP_TYPE"), {"__builtins__": None}, EVAL_LOCALS
+    )
 
 # Simple group restrictions
 if os.environ.get("AUTH_LDAP_REQUIRE_GROUP"):
-    AUTH_LDAP_REQUIRE_GROUP = eval(os.environ.get("AUTH_LDAP_REQUIRE_GROUP"), {'__builtins__': None}, EVAL_LOCALS)
+    AUTH_LDAP_REQUIRE_GROUP = eval(
+        os.environ.get("AUTH_LDAP_REQUIRE_GROUP"), {"__builtins__": None}, EVAL_LOCALS
+    )
 if os.environ.get("AUTH_LDAP_DENY_GROUP"):
-    AUTH_LDAP_DENY_GROUP = eval(os.environ.get("AUTH_LDAP_DENY_GROUP"), {'__builtins__': None}, EVAL_LOCALS)
+    AUTH_LDAP_DENY_GROUP = eval(
+        os.environ.get("AUTH_LDAP_DENY_GROUP"), {"__builtins__": None}, EVAL_LOCALS
+    )
 
 # Define user flags based on group membership. Currently only "is_active" and "is_staff" are supported.
 if os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP"):
-    AUTH_LDAP_USER_FLAGS_BY_GROUP = eval(os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP"), {'__builtins__': None}, EVAL_LOCALS)
+    AUTH_LDAP_USER_FLAGS_BY_GROUP = eval(
+        os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP"),
+        {"__builtins__": None},
+        EVAL_LOCALS,
+    )
 
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
@@ -75,7 +88,10 @@ if os.environ.get("AUTH_LDAP_MIRROR_GROUPS"):
 # Mirror users' LDAP group membership in the Django database, except for the
 # specified list of groups. If this is not None, AUTH_LDAP_MIRROR_GROUPS is
 # ignored.
-if os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT") and type(os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT")) is list:
+if (
+    os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT")
+    and type(os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT")) is list
+):
     AUTH_LDAP_MIRROR_GROUPS_EXCEPT = os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT")
 
 # Keep ModelBackend around for per-user permissions and maybe a local
