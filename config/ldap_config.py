@@ -16,6 +16,10 @@ AUTH_LDAP_SERVER_URI = os.environ.get("AUTH_LDAP_SERVER_URI", "ldap://localhost"
 AUTH_LDAP_BIND_DN = os.environ.get("AUTH_LDAP_BIND_DN", "")
 AUTH_LDAP_BIND_PASSWORD = os.environ.get("AUTH_LDAP_BIND_PASSWORD", "")
 
+# The amount of time, in seconds, a user’s group memberships and distinguished
+# name are cached.
+AUTH_LDAP_CACHE_TIMEOUT = os.environ.get("AUTH_LDAP_CACHE_TIMEOUT", 0)
+
 if os.environ.get("AUTH_LDAP_USER_DN_TEMPLATE"):
     AUTH_LDAP_USER_DN_TEMPLATE = os.environ.get("AUTH_LDAP_USER_DN_TEMPLATE")
 else:
@@ -60,9 +64,19 @@ if os.environ.get("AUTH_LDAP_START_TLS"):
 # This is the default.
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
 
-# Mirror users' LDAP group membership in the Django database.
+# Mirror users' LDAP group membership in the Django database. Set to True to
+# mirror all groups or a list of groups to mirror specific groups.
 if os.environ.get("AUTH_LDAP_MIRROR_GROUPS"):
-    AUTH_LDAP_MIRROR_GROUPS = True
+    if type(os.environ.get("AUTH_LDAP_MIRROR_GROUPS")) is list:
+        AUTH_LDAP_MIRROR_GROUPS = os.environ.get("AUTH_LDAP_MIRROR_GROUPS")
+    else:
+        AUTH_LDAP_MIRROR_GROUPS = True
+
+# Mirror users' LDAP group membership in the Django database, except for the
+# specified list of groups. If this is not None, AUTH_LDAP_MIRROR_GROUPS is
+# ignored.
+if os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT") and type(os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT")) is list:
+    AUTH_LDAP_MIRROR_GROUPS_EXCEPT = os.environ.get("AUTH_LDAP_MIRROR_GROUPS_EXCEPT")
 
 # Keep ModelBackend around for per-user permissions and maybe a local
 # superuser.
