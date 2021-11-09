@@ -41,10 +41,15 @@ def test_add_keys(admin_client, jwt):
 
 @pytest.mark.django_db()
 def test_add_minions(admin_client, jwt):
-    assert Minions.objects.count() == 0
+    admin_client.post(
+        "/api/keys/manage_keys/", {"action": "accept", "target": "*"}, **jwt
+    )
+    minions = Minions.objects.all()
+    assert minions.count() == 0
     response = admin_client.post("/api/minions/refresh_minions/", **jwt)
     assert response.status_code == 200
-    assert Minions.objects.count() > 0
+    resp = response.json()
+    assert "refreshed" in resp
 
 
 @pytest.mark.django_db()
@@ -129,16 +134,17 @@ def test_change_notifs(admin_client, admin_user, jwt):
     Default permissions are added to salt, and stored in user_settings.
     """
     notifs_defaults = {
-        "notifs_created": False,
-        "notifs_published": False,
-        "notifs_returned": True,
-        "notifs_event": False,
+        "created": False,
+        "published": False,
+        "returned": True,
+        "event": False,
     }
     for status, value in notifs_defaults.items():
-        assert getattr(admin_user.user_settings, status) == value
+        assert status in admin_user.user_settings.settings["UserSettings"]["notifs"]
+    assert admin_user.user_settings.settings["UserSettings"]["notifs"]["event"] is False
     response = admin_client.patch(
         "/api/userssettings/{}/".format(admin_user.id),
-        {"notifs_created": "true"},
+        {"settings": {"event": "true"}},
         content_type="application/json",
         **jwt
     )
