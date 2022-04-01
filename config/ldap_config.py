@@ -19,7 +19,7 @@ AUTH_LDAP_BIND_PASSWORD = os.environ.get("AUTH_LDAP_BIND_PASSWORD", "")
 
 # The amount of time, in seconds, a user’s group memberships and distinguished
 # name are cached.
-AUTH_LDAP_CACHE_TIMEOUT = os.environ.get("AUTH_LDAP_CACHE_TIMEOUT", 0)
+AUTH_LDAP_CACHE_TIMEOUT = int(os.environ.get("AUTH_LDAP_CACHE_TIMEOUT", 0))
 
 if os.environ.get("AUTH_LDAP_USER_DN_TEMPLATE"):
     AUTH_LDAP_USER_DN_TEMPLATE = os.environ.get("AUTH_LDAP_USER_DN_TEMPLATE")
