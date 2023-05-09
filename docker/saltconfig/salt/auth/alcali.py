@@ -18,14 +18,12 @@ Enable Alcali authentication.
 :depends:   - MySQL-python Python module or psycopg2.
 """
 
-from __future__ import absolute_import
 import logging
 import sys
 from contextlib import contextmanager
 
 # Import 3rd-party libs
 import salt.exceptions
-import salt.ext.six as six
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +68,7 @@ def _get_options():
     }
 
     if HAS_MYSQL:
-        for k, v in six.iteritems(defaults):
+        for k, v in defaults.items():
             try:
                 _options[k] = __opts__["{}.{}".format("mysql", k)]
             except KeyError:
@@ -80,7 +78,7 @@ def _get_options():
         defaults.pop("pass")
         defaults["passwd"] = "salt"
         defaults["port"] = 5432
-        for k, v in six.iteritems(defaults):
+        for k, v in defaults.items():
             try:
                 _options[k] = __opts__["{}.{}".format("returner.postgres", k)]
             except KeyError:
@@ -88,7 +86,7 @@ def _get_options():
 
     # post processing
     for k, v in six.iteritems(_options):
-        if isinstance(v, six.string_types) and v.lower() == "none":
+        if isinstance(v, str) and v.lower() == "none":
             # Ensure 'None' is rendered as None
             _options[k] = None
         if k == "port":
