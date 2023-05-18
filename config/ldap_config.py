@@ -62,6 +62,12 @@ if os.environ.get("AUTH_LDAP_USER_FLAGS_BY_GROUP"):
         EVAL_LOCALS,
     )
 
+# The field on the user model used to query the authenticating user in the database. 
+# If unset, uses the supplied username. When set, the value used to query is
+# obtained through the AUTH_LDAP_USER_ATTR_MAP
+if os.environ.get("AUTH_LDAP_USER_QUERY_FIELD"):
+    AUTH_LDAP_USER_QUERY_FIELD = os.environ.get("AUTH_LDAP_USER_QUERY_FIELD")
+
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
     "username": os.environ.get("AUTH_LDAP_USER_ATTR_MAP_USERNAME", "sAMAccountName"),
